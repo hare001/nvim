@@ -5,9 +5,20 @@
 " |_|  |_|\__, | |_| \_|  \_/  |___|_|  |_|_| \_\\____|
 "         |___/
 " 
-let g:python_host_prog='/usr/bin/python'
-let g:python3_host_prog='/usr/local/bin/python3'
-"let g:python3_host_prog='/usr/bin/python3'
+if empty(glob('$HOME/.config/nvim/autoload/plug.vim'))
+	silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+if has("win32")||has("win64")
+	let g:python_host_prog='C:\Users\root\Anaconda2\python.exe'
+	let g:python3_host_prog='C:\Program Files (x86)\Python36-32\python3.exe'
+else
+	let g:python_host_prog='/usr/bin/python'
+	let g:python3_host_prog='/usr/local/bin/python3'
+endif
+
+
 set nocompatible
 
 
@@ -45,7 +56,7 @@ endfunc
 " ########
 " Plugins
 " ########
-call plug#begin('~/.local/share/nvim/plugged')
+call plug#begin('$HOME/.config/nvim/plugged')
 Plug 'bling/vim-airline'
 Plug 'bigeagle/molokai'
 Plug 'scrooloose/nerdcommenter'
@@ -53,9 +64,7 @@ Plug 'preservim/nerdtree', {'on': 'NERDTreeToggle' } "lazy loading must be enabl
 Plug 'mhinz/vim-startify' "start screen
 Plug 'kshenoy/vim-signature' "bookmark
 "Plug 'davidhalter/jedi-vim', {'for': 'python' } "python autocompletion
-"Plug 'w0rp/ale'
-"Plug '/usr/local/opt/fzf'
-"Plug 'junegunn/fzf.vim'
+"Plug 'w0rp/ale' " lint
 "Plug 'terryma/vim-multiple-cursors'
 Plug 'euclio/vim-markdown-composer', { 'for': 'markdown', 'do': function('BuildComposer') }
 Plug 'lambdalisue/suda.vim' "sudo in nvim, use :w sudo://% to force write
@@ -66,6 +75,8 @@ colorscheme molokai
 
 set background=dark
 set list lcs=tab:>-,eol:<,nbsp:%
+set encoding=utf-8
+set fileencodings=ucs-bom,utf-8,gbk,cp936,latin-1
 
 set ruler
 set number
@@ -80,7 +91,11 @@ set hidden
 set cmdheight=2
 set updatetime=100
 set shortmess+=c
-set signcolumn=number
+if has("patch-8.1.1564")
+	set signcolumn=number
+else
+	set signcolumn=yes
+endif
 
 
 set hlsearch
@@ -103,6 +118,8 @@ filetype off
 filetype plugin on
 filetype indent on
 filetype plugin indent on
+set smartindent
+set autoread
 
 " ################
 " No backup files
@@ -115,7 +132,7 @@ set noundofile
 " ##################
 " <leader> Settings
 " ##################
-let mapleader=';'
+let mapleader=";"
 vnoremap <leader>y "+y
 nmap <leader>p "+p
 nmap <leader>l :set list!<CR>
@@ -126,7 +143,8 @@ nmap <leader>h :help
 nmap <leader>o o<ESC>
 nmap <leader>O O<ESC>
 nmap <leader>g ggVG
-map <F2> :NERDTreeToggle<CR>
+"map <F2> :NERDTreeToggle<CR>
+map <F2> :CocCommand explorer<CR>
 vmap <leader>s :'<,'>sort<CR>
 map <F5> :call RUN()<CR>
 nnoremap <leader>n :call NumberToggle()<CR>
@@ -136,6 +154,7 @@ nnoremap <leader>n :call NumberToggle()<CR>
 " coc.nvim Settings
 " ##################
 let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-jedi', 'coc-explorer']
+let g:coc_disable_startup_warning = 1
 " Use tab for trigger completion with characters ahead and navigate
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
@@ -200,12 +219,21 @@ let g:markdown_composer_open_browser = 1
 " ################
 let g:gonvim_start_fullscreen = 1
 
+" ##################
+" nerdtree Settings
+" ##################
+let NERDTreeMinimalUI=0
+let NERDTreeQuitOnOpen=0
+let NERDChristmasTree=0
+let NERDTreeDirArrows=1
 
 
 " ##############
 " suda Settings
 " ###############
 let g:suda#prefix = 'sudo://'
+
+
 
 " ##########################
 " autocmd Markdown Snippets
@@ -218,6 +246,7 @@ autocmd Filetype markdown inoremap <buffer> ,s ~~~~ <++><Esc>F~hi
 autocmd Filetype markdown inoremap <buffer> ,t <center></center> <++><Esc>F/hi
 autocmd Filetype markdown inoremap <buffer> ,i ** <++><Esc>F*i
 autocmd Filetype markdown inoremap <buffer> ,d `` <++><Esc>F`i
+autocmd Filetype markdown inoremap <buffer> ,t <center></center><++><Esc>F/hi
 autocmd Filetype markdown inoremap <buffer> ,c ```<Enter><++><Enter>```<Enter><Enter><++><Esc>4kA
 autocmd Filetype markdown inoremap <buffer> ,m - [ ] 
 autocmd Filetype markdown inoremap <buffer> ,p ![](<++>) <++><Esc>F[a
@@ -262,3 +291,4 @@ endfunction
 "  autocmd Settings
 " ##################
 autocmd! bufwritepost .vimrc source %
+autocmd! bufwritepost init.vim source %
