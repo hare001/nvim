@@ -47,7 +47,11 @@ endfunction
 function! RUN()
 	exec "w"
 	if &filetype == 'python'
-		exec "!python %"
+		set splitbelow
+		:sp
+		:term python3 %
+	elseif &filetype =='markdown'
+		exec 'InstantMarkdownPreview'
 	endif
 endfunction
 
@@ -151,21 +155,36 @@ set noundofile
 " === Plugins
 " ===
 call plug#begin('$HOME/.config/nvim/plugged')
+
 Plug 'bling/vim-airline'
+
+" Colorscheme
 Plug 'bigeagle/molokai'
+Plug 'theniceboy/vim-deus'
+
 Plug 'scrooloose/nerdcommenter'
-Plug 'preservim/nerdtree', {'on': 'NERDTreeToggle' } "lazy loading must be enabled
 Plug 'mhinz/vim-startify' "start screen
 Plug 'kshenoy/vim-signature' "bookmark
-"Plug 'davidhalter/jedi-vim', {'for': 'python' } "python autocompletion
-"Plug 'w0rp/ale' " lint
 "Plug 'terryma/vim-multiple-cursors'
-Plug 'euclio/vim-markdown-composer', { 'for': 'markdown', 'do': function('BuildComposer') }
-Plug 'lambdalisue/suda.vim' "sudo in nvim, use :w sudo://% to force write
+"Plug 'preservim/nerdtree', {'on': 'NERDTreeToggle' } "lazy loading must be enabled
+
+" Markdown
+Plug 'suan/vim-instant-markdown', {'for': 'markdown' }
+Plug 'mzlogin/vim-markdown-toc', {'for': 'markdown' }
+"Plug 'euclio/vim-markdown-composer', { 'for': 'markdown', 'do': function('BuildComposer') }
+
+" Auto Complete
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'Shougo/deoppet.nvim', { 'do': ':UpdateRemotePlugins' }
+"Plug 'davidhalter/jedi-vim', {'for': 'python' } "python autocompletion
+
+" Other useful things
+Plug 'lambdalisue/suda.vim' "sudo in nvim, use :w sudo://% to force write
+
 call plug#end()
 
-colorscheme molokai
+"colorscheme molokai
+colorscheme deus
 
 " ===
 " === <leader> Settings
@@ -195,7 +214,7 @@ nmap <leader>n :call NumberToggle()<CR>
 " ===
 " === coc.nvim Settings
 " ===
-let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-jedi', 'coc-explorer']
+let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-python', 'coc-explorer']
 let g:coc_disable_startup_warning = 1
 " Use tab for trigger completion with characters ahead and navigate
 inoremap <silent><expr> <TAB>
@@ -260,7 +279,7 @@ let g:airline_powerline_font=1
 " ===
 " === markdown-composer Settings
 " ===
-let g:markdown_composer_autostart = 1
+let g:markdown_composer_autostart = 0
 let g:markdown_composer_open_browser = 1
 
 
