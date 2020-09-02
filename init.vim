@@ -25,9 +25,12 @@ endif
 if has("win32")||has("win64")
 	let g:python_host_prog='C:\Users\root\Anaconda2\python.exe'
 	let g:python3_host_prog='C:\Program Files (x86)\Python36-32\python3.exe'
-else
+elseif has("unix")&&has("mac")
 	let g:python_host_prog='/usr/bin/python'
 	let g:python3_host_prog='/usr/local/bin/python3'
+elseif has("unix")
+	let g:python_host_prog='/usr/bin/python'
+	let g:python3_host_prog='/usr/bin/python3'
 endif
 
 
@@ -212,6 +215,7 @@ nmap <leader>W :w sudo://%<CR>
 nmap <leader>o o<Esc>
 nmap <leader>O O<Esc>
 nmap <leader>g ggVG
+nmap <leader>h :echo has("")
 vmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 " popup
