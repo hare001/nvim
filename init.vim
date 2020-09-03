@@ -215,7 +215,7 @@ nmap <leader>W :w sudo://%<CR>
 nmap <leader>o o<Esc>
 nmap <leader>O O<Esc>
 nmap <leader>g ggVG
-nmap <leader>h :echo has("")
+nmap <leader>h :echo has("")<left><left>
 vmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 " popup
