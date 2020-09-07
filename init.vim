@@ -110,6 +110,7 @@ set updatetime=100
 set shortmess+=c
 set splitbelow
 set splitright
+set wildmenu
 if has("patch-8.1.1564")
 	set signcolumn=number
 else
@@ -191,6 +192,8 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " other useful things
 Plug 'lambdalisue/suda.vim' "sudo in nvim, use :w sudo://% to force write
 
+" tagbar
+Plug 'majutsushi/tagbar'
 call plug#end()
 
 "colorscheme molokai
@@ -229,6 +232,7 @@ map <F2> :CocCommand explorer<CR>
 vmap <leader>s :'<,'>sort<CR>
 map <F5> :call CompileNRun()<CR>
 nmap <leader>n :call NumberToggle()<CR>
+nnoremap <silent> <F8> :TagbarToggle<CR>
 
 
 " ===
@@ -345,6 +349,14 @@ let NERDTreeMinimalUI=0
 let NERDTreeQuitOnOpen=0
 let NERDChristmasTree=0
 let NERDTreeDirArrows=1
+
+
+" ===
+" ===  tagbar settings
+" ===
+let g:tagbar_position='botright vertical'
+let g:tagbar_iconchars = ['▶', '▼']
+let g:tagbar_width=30
 
 
 " ===
