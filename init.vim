@@ -90,10 +90,10 @@ endfunction
 " ===
 set background=dark
 set list
-"set listchars=tab:>-,eol:<,nbsp:%,trail:▫
 set listchars=tab:\|\ ,eol:<,nbsp:%,trail:▫
 set encoding=utf-8
 set fileencodings=ucs-bom,utf-8,gbk,cp936,latin-1
+set conceallevel=2
 
 set ruler
 set number
