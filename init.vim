@@ -23,8 +23,8 @@ endif
 " ===  python supports
 " ===
 if has("win32")||has("win64")
-	let g:python_host_prog='C:\Users\root\Anaconda2\python.exe'
-	let g:python3_host_prog='C:\Program Files (x86)\Python36-32\python3.exe'
+	let g:python_host_prog='$HOME/scoop/shims/python2'
+	let g:python3_host_prog='$HOME/scoop/shims/python3'
 elseif has("unix")&&has("mac")
 	let g:python_host_prog='/usr/bin/python'
 	let g:python3_host_prog='/usr/local/bin/python3'
@@ -98,7 +98,7 @@ set fileencodings=ucs-bom,utf-8,gbk,cp936,latin-1
 set ruler
 set number
 set showcmd
-set showmode
+set noshowmode
 set scrolloff=20
 set cursorline
 set cursorcolumn
@@ -111,6 +111,7 @@ set shortmess+=c
 set splitbelow
 set splitright
 set wildmenu
+set autochdir
 if has("patch-8.1.1564")
 	set signcolumn=number
 else
@@ -169,6 +170,8 @@ set wildignore+=*.png,*.jpg,*.gif,*.jpeg
 call plug#begin('$HOME/.config/nvim/plugged')
 
 Plug 'bling/vim-airline'
+"Plug 'itchyny/lightline.vim'
+"Plug 'maciakl/vim-neatstatus'
 
 " colorscheme
 Plug 'bigeagle/molokai'
@@ -191,9 +194,13 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " other useful things
 Plug 'lambdalisue/suda.vim' "sudo in nvim, use :w sudo://% to force write
+Plug 'tpope/vim-surround'
 
 " tagbar
 Plug 'majutsushi/tagbar'
+
+" language server
+Plug 'pappasam/coc-jedi', { 'do': 'yarn install --frozen-lockfile && yarn build' }
 call plug#end()
 
 "colorscheme molokai
@@ -244,15 +251,14 @@ let g:coc_global_extensions = [
 			\ 'coc-go',
 			\ 'coc-html',
 			\ 'coc-json',
+			\ 'coc-jedi',
 			\ 'coc-markdownlint',
+			\ 'coc-pairs',
+			\ 'coc-phpls',
 			\ 'coc-prettier',
-			\ 'coc-pyright',
-			\ 'coc-python',
 			\ 'coc-sh',
 			\ 'coc-snippets',
 			\ 'coc-syntax',
-			\ 'coc-pairs',
-			\ 'coc-phpls',
 			\ 'coc-translator',
 			\ 'coc-tsserver',
 			\ 'coc-vimlsp',
