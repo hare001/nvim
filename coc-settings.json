@@ -49,7 +49,7 @@
     "vim",
     "markdown"
   ],
-  "explorer.width": 38,
+  "explorer.width": 30,
   "explorer.quitOnOpen": true,
   "explorer.sources": [
     {
@@ -64,10 +64,10 @@
   "explorer.file.column.indent.indentLine": true,
   "explorer.file.showHiddenFiles": true,
   "explorer.icon.enableNerdfont": true,
-  "explorer.file.column.git.showIgnored": true,
+  "explorer.column.git.showIgnored": true,
   "explorer.keyMappingMode": "none",
   "explorer.buffer.showHiddenBuffers": false,
-  "explorer.keyMappings": {
+  "explorer.keyMappings.global": {
     "i": false,
     "gk": "expandablePrev",
     "gj": "expandableNext",
