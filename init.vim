@@ -86,6 +86,16 @@ function ScriptHeader()
 	"normal ''
 endfunction
 
+"function ChangeTheme()
+	"if g:colors_name == 'deus'
+		"colorscheme horizon
+	"elseif g:colors_name == 'horizon'
+		"colorscheme onedark
+	"else
+		"colorscheme deus
+	"endif
+"endfunction
+
 
 " ===
 " ===  editor settings
@@ -293,7 +303,7 @@ vmap <Leader>e <Plug>(coc-translator-ev)
 vmap <leader>s :'<,'>sort<cr>
 nmap <leader>n :call NumberToggle()<cr>
 nmap <F2> :Defx <cr>
-nmap <F4> :colorscheme afterglow<cr>
+"nmap <F4> :call ChangeTheme()<cr>
 map <F5> :call CompileNRun()<cr>
 nnoremap <silent> <F8> :TagbarToggle<cr>
 nmap <leader>rp :call map(dein#check_clean(), "delete(v:val, 'rf')")<cr>
@@ -441,7 +451,6 @@ let g:AutoPairsFlyMode = 1
 noremap <F3> :Autoformat<cr>
 
 
-
 " ===
 " ===  leetcode settings
 " ===
@@ -456,35 +465,8 @@ nnoremap <leader>lt :LeetCodeTest<cr>
 nnoremap <leader>ls :LeetCodeSubmit<cr>
 nnoremap <leader>li :LeetCodeSignIn<cr>
 
-
-" ===
-" ===  autocmd markdown snippets
-" ===
-autocmd Filetype markdown imap <buffer> ,f <Esc>/<++><cr>:nohlsearch<cr>"_c4l
-autocmd Filetype markdown imap <buffer> ,w <Esc>/ <++><cr>:nohlsearch<cr>"_c5l<cr>
-autocmd Filetype markdown imap <buffer> ,n ---<Enter><Enter>
-autocmd Filetype markdown imap <buffer> ,b **** <++><Esc>F*hi
-autocmd Filetype markdown imap <buffer> ,s ~~~~ <++><Esc>F~hi
-autocmd Filetype markdown imap <buffer> ,t <center></center> <++><Esc>F/hi
-autocmd Filetype markdown imap <buffer> ,i ** <++><Esc>F*i
-autocmd Filetype markdown imap <buffer> ,d `` <++><Esc>F`i
-autocmd Filetype markdown imap <buffer> ,t <center></center><++><Esc>F/hi
-autocmd Filetype markdown imap <buffer> ,c ```<Enter><++><Enter>```<Enter><Enter><++><Esc>4kA
-autocmd Filetype markdown imap <buffer> ,m - [ ]
-autocmd Filetype markdown imap <buffer> ,p ![](<++>) <++><Esc>F[a
-autocmd Filetype markdown imap <buffer> ,a [](<++>) <++><Esc>F[a
-autocmd Filetype markdown imap <buffer> ,1 #<Space><Enter><++><Esc>kA
-autocmd Filetype markdown imap <buffer> ,2 ##<Space><Enter><++><Esc>kA
-autocmd Filetype markdown imap <buffer> ,3 ###<Space><Enter><++><Esc>kA
-autocmd Filetype markdown imap <buffer> ,4 ####<Space><Enter><++><Esc>kA
-autocmd Filetype markdown imap <buffer> ,l --------<Enter>
-
-
-" ===
-" ===  autocmd viml snippets
-" ===
-autocmd FileType vim imap <buffer> ,t " ===<Esc>yyppkA
-autocmd FileType vim imap <buffer> ,da call dein#add('')<Esc>hi
+source $HOME/.config/nvim/snippets/markdown_snippets.vim
+source $HOME/.config/nvim/snippets/vim_snippets.vim
 
 
 " ===
@@ -498,6 +480,5 @@ autocmd BufNewFile *.sh call ScriptHeader()
 " ===  autocmd settings
 " ===
 autocmd! bufwritepost $MYVIMRC source %
-autocmd! bufwritepost $MYVIMRC call lightline#init()
+"autocmd! bufwritepost $MYVIMRC call lightline#init()
 autocmd! bufwritepost $MYVIMRC call lightline#colorscheme()
-
