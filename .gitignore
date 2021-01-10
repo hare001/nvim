@@ -2,4 +2,8 @@
 .netrwhist
 plugged/
 autoload/
-
+dein/.cache
+dein/repos
+dein/cache_nvim
+dein/state_nvim.vim
+oldstuff/

@@ -8,29 +8,31 @@
 
 " Author: @hare
 
+" ===
+" ===  todos
+" ===
+" remove nvim vertical line between windows
+" fix status line bug
+" add python language server for deoplete.vim
+
 
 " ===
-" ===  auto load for first time uses
+" ===  autoload for first time uses
 " ===
-if empty(glob('$HOME/.config/nvim/autoload/plug.vim'))
-	silent !curl -fLo $HOME/.config/nvim/autoload/plug.vim --create-dirs
-				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+if empty(glob('$HOME/.config/nvim/dein/repos/github.com/Shougo/dein.vim'))
+	silent !curl -fLo $HOME/.config/nvim/install.sh --create-dirs
+				\ https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh
+	silent !sh ./installer.sh $HOME/.config/nvim/dein
+	autocmd VimEnter * :call dein#install() | source $MYVIMRC
 endif
 
 
 " ===
 " ===  python supports
 " ===
-if has("win32")||has("win64")
-	let g:python_host_prog='$HOME/scoop/shims/python2'
-	let g:python3_host_prog='$HOME/scoop/shims/python3'
-elseif has("unix")&&has("mac")
+if has('mac')
 	let g:python_host_prog='/usr/bin/python'
 	let g:python3_host_prog='/usr/local/bin/python3'
-elseif has("unix")
-	let g:python_host_prog='/usr/bin/python'
-	let g:python3_host_prog='/usr/bin/python3'
 endif
 
 
@@ -51,7 +53,7 @@ function! CompileNRun()
 	elseif &filetype == 'sh'
 		set splitbelow
 		:sp
-		:term 
+		:term
 	elseif &filetype =='html'
 		silent! !open %
 	endif
@@ -89,11 +91,16 @@ endfunction
 " ===  editor settings
 " ===
 set background=dark
+set termguicolors " if dont set this option, color might not right
 set list
 set listchars=tab:\|\ ,eol:<,nbsp:%,trail:▫
 set encoding=utf-8
 set fileencodings=ucs-bom,utf-8,gbk,cp936,latin-1
 set conceallevel=2
+"set statusline
+"set fillchars=stl:-
+"set fillchars+=stlnc:-
+"set fillchars+=vert:\|
 
 set ruler
 set number
@@ -138,10 +145,9 @@ set smarttab
 set shiftround
 syntax enable
 syntax on
-filetype off
-filetype plugin on
-filetype indent on
-filetype plugin indent on
+"filetype off
+"filetype plugin on
+"filetype indent on
 set smartindent
 set autoread
 
@@ -163,49 +169,99 @@ set wildignore+=*.git
 set wildignore+=*.png,*.jpg,*.gif,*.jpeg
 
 
+if &compatible
+	set nocompatible
+endif
+
 
 " ===
 " ===  plugins
 " ===
-call plug#begin('$HOME/.config/nvim/plugged')
+let s:dein_path = '~/.config/nvim/dein'
 
-Plug 'bling/vim-airline'
-"Plug 'itchyny/lightline.vim'
-"Plug 'maciakl/vim-neatstatus'
+" Add the dein installation directory into runtimepath
+let &runtimepath = &runtimepath.','.s:dein_path.'/repos/github.com/Shougo/dein.vim'
 
-" colorscheme
-Plug 'bigeagle/molokai'
-Plug 'theniceboy/vim-deus'
+if dein#load_state(s:dein_path)
+	call dein#begin(s:dein_path)
 
-Plug 'scrooloose/nerdcommenter'
-Plug 'mhinz/vim-startify' "start screen
-Plug 'kshenoy/vim-signature' "bookmark
-"Plug 'terryma/vim-multiple-cursors'
-"Plug 'preservim/nerdtree', {'on': 'NERDTreeToggle' } "lazy loading must be enabled
+	call dein#add(s:dein_path.'/repos/github.com/Shougo/dein.vim')
 
-" markdown
-Plug 'suan/vim-instant-markdown', {'for': 'markdown' }
-Plug 'mzlogin/vim-markdown-toc', {'for': 'markdown' }
+	" install third-party plugins
+	" call dein#add('tpope/vim-surround')
 
-" auto complete
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-"Plug 'Shougo/deoppet.nvim', { 'do': ':UpdateRemotePlugins' }
-"Plug 'davidhalter/jedi-vim', {'for': 'python' } "python autocompletion
+	" colorscheme
+	call dein#add('theniceboy/vim-deus')
+	call dein#add('bigeagle/molokai')
+	call dein#add('altercation/vim-colors-solarized')
+	call dein#add('danilo-augusto/vim-afterglow')
+	call dein#add('joshdick/onedark.vim')
+	call dein#add('ntk148v/vim-horizon')
 
-" other useful things
-Plug 'lambdalisue/suda.vim' "sudo in nvim, use :w sudo://% to force write
-Plug 'tpope/vim-surround'
+	" auto completion
+	call dein#add('Shougo/deoplete.nvim')
+	if !has('nvim')
+		call dein#add('roxma/nvim-yarp')
+		call dein#add('roxma/vim-hug-neovim-rpc')
+	endif
+	call dein#add('deoplete-plugins/deoplete-jedi')
+	call dein#add('Shougo/neco-vim')
+	call dein#add('jiangmiao/auto-pairs')
+	call dein#add('autozimu/LanguageClient-neovim', {
+				\ 'rev': 'next',
+				\ 'build': 'bash install.sh',
+				\ })
 
-" tagbar
-Plug 'majutsushi/tagbar'
+	" file explorer
+	call dein#add('Shougo/defx.nvim')
+	if !has('nvim')
+		call dein#add('roxma/nvim-yarp')
+		call dein#add('roxma/vim-hug-neovim-rpc')
+	endif
+	call dein#add('kristijanhusak/defx-icons')
 
-" language server
-Plug 'pappasam/coc-jedi', { 'do': 'yarn install --frozen-lockfile && yarn build' }
-call plug#end()
+	" auto format
+	call dein#add('Chiel92/vim-autoformat')
+
+	" markdown
+	call dein#add('suan/vim-instant-markdown')
+	"call dein#config('vim-instant-markdown', {
+				"\ 'lazy': 1, 'on_ft': 'markdown',
+				"\ })
+	call dein#add('mzlogin/vim-markdown-toc')
+	"call dein#config('vim-markdown-toc', {
+				"\ 'lazy': 1, 'on_ft': 'markdown',
+				"\ })
+
+	" tagbar
+	call dein#add('majutsushi/tagbar')
+
+	" leetcode
+	call dein#add('ianding1/leetcode.vim')
+
+	" other useful plugins
+	call dein#add('lambdalisue/suda.vim')
+	call dein#add('tpope/vim-surround')
+	"call dein#add('bling/vim-airline')
+	call dein#add('itchyny/lightline.vim')
+	call dein#add('scrooloose/nerdcommenter') " comment
+	call dein#add('mhinz/vim-startify')
+	call dein#add('kshenoy/vim-signature')
+	call dein#add('wsdjeg/dein-ui.vim')
+
+	call dein#end()
+	call dein#save_state()
+endif
+
+
+filetype plugin indent on
+
 
 "colorscheme molokai
-colorscheme deus
- command! -nargs=0 Prettier :CocCommand prettier.formatFile
+"colorscheme deus
+"colorscheme onedark
+colorscheme horizon
+
 
 " ===
 " ===  <leader> settings
@@ -218,10 +274,10 @@ let mapleader=";"
 " ===
 vmap <leader>y "+y
 nmap <leader>p "+p
-nmap <leader>l :set list!<CR>
-nmap <leader>q :q<CR>
-nmap <leader>w :w<CR>
-nmap <leader>W :w sudo://%<CR>
+nmap <leader>l :set list!<cr>
+nmap <leader>q :q<cr>
+nmap <leader>w :w<cr>
+nmap <leader>W :w sudo://%<cr>
 nmap <leader>o o<Esc>
 nmap <leader>O O<Esc>
 nmap <leader>g ggVG
@@ -234,89 +290,80 @@ vmap <Leader>t <Plug>(coc-translator-pv)
 " echo
 nmap <Leader>e <Plug>(coc-translator-e)
 vmap <Leader>e <Plug>(coc-translator-ev)
-"map <F2> :NERDTreeToggle<CR>
-map <F2> :CocCommand explorer<CR>
-vmap <leader>s :'<,'>sort<CR>
-map <F5> :call CompileNRun()<CR>
-nmap <leader>n :call NumberToggle()<CR>
-nnoremap <silent> <F8> :TagbarToggle<CR>
+vmap <leader>s :'<,'>sort<cr>
+nmap <leader>n :call NumberToggle()<cr>
+nmap <F2> :Defx <cr>
+nmap <F4> :colorscheme afterglow<cr>
+map <F5> :call CompileNRun()<cr>
+nnoremap <silent> <F8> :TagbarToggle<cr>
+nmap <leader>rp :call map(dein#check_clean(), "delete(v:val, 'rf')")<cr>
+nmap <leader>rc :call dein#recache_runtimepath()<cr>
 
 
 " ===
-" ===  coc.nvim settings
+" === deoplete settings
 " ===
-let g:coc_global_extensions = [
-			\ 'coc-css',
-			\ 'coc-explorer',
-			\ 'coc-go',
-			\ 'coc-html',
-			\ 'coc-json',
-			\ 'coc-jedi',
-			\ 'coc-markdownlint',
-			\ 'coc-pairs',
-			\ 'coc-phpls',
-			\ 'coc-prettier',
-			\ 'coc-sh',
-			\ 'coc-snippets',
-			\ 'coc-syntax',
-			\ 'coc-translator',
-			\ 'coc-tsserver',
-			\ 'coc-vimlsp',
-			\ 'coc-xml',
-			\ 'coc-yaml'
-			\]
-let g:coc_disable_startup_warning = 1
-" use tab for trigger completion with characters ahead and navigate
-inoremap <silent><expr> <TAB>
-	  \ pumvisible() ? "\<C-n>" :
-	  \ <SID>check_back_space() ? "\<TAB>" :
-	  \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+let g:deoplete#enable_at_startup = 1
+call deoplete#custom#option({
+			\ 'smart_case': v:true,
+			\ 'auto_complete_delay': 100
+			\ })
+inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+"autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+call deoplete#custom#option('sources', {
+			\ 'cpp': ['LanguageClient'],
+			\ 'c': ['LanguageClient'],
+			\ 'vim': ['vim'],
+			\ 'zsh': ['zsh'],
+			\ 'python': ['pyls']
+			\ })
 
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+
+" ===
+" ===  defx settings
+" ===
+let g:defx_icons_enable_syntax_hightlight = 0
+let g:defx_icons_enable_syntax_highlight = 1
+let g:defx_icons_column_length = 1
+let g:defx_icons_directory_icon = ''
+let g:defx_icons_mark_icon = '*'
+let g:defx_icons_copy_icon = ''
+let g:defx_icons_move_icon = ''
+let g:defx_icons_parent_icon = ''
+let g:defx_icons_default_icon = ''
+let g:defx_icons_directory_symlink_icon = ''
+" Options below are applicable only when using "tree" feature
+let g:defx_icons_root_opened_tree_icon = ''
+let g:defx_icons_nested_opened_tree_icon = ''
+let g:defx_icons_nested_closed_tree_icon = ''
+call defx#custom#option('_', {
+			\ 'columns': 'icons:git:indent:filename:type',
+			\ 'winwidth': 30,
+			\ 'split': 'vertical',
+			\ 'direction': 'topleft',
+			\ 'listed': 1,
+			\ 'ignored_files': '.git,.svn,.__pycache__,.sass-cache,.DS_Store,*.pyc,*.swp,.netrwhist,.gitignore',
+			\ 'show_ignored_files': 0,
+			\ 'buffer_name': '',
+			\ 'toggle': 1,
+			\ 'resume': 1
+			\ })
+autocmd FileType defx call s:defx_mappins()
+autocmd BufWritePost * call defx#redraw()
+
+function! s:defx_mappins() abort
+	nnoremap <silent><buffer><expr> <cr> defx#do_action('open_tree', 'toggle')
+	nnoremap <silent><buffer><expr> <2-LeftMouse> defx#do_action('open', ['drop'])
+	nnoremap <silent><buffer><expr> l defx#do_action('drop')
+	nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
+	nnoremap <silent><buffer><expr> d defx#do_action('remove')
+	nnoremap <silent><buffer><expr> r defx#do_action('rename')
+	nnoremap <silent><buffer><expr> N defx#do_action('new_file')
+	nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
+	nnoremap <silent><buffer><expr> P defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':h'))
+	nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+	nnoremap <silent><buffer><expr> <C-r> defx#do_action('redraw')
 endfunction
-if has('nvim')
-	inoremap <silent><expr> <c-l> coc#refresh()
-else
-	inoremap <silent><expr><c-@> coc#refresh()
-endif
-
-" use <cr> to confirm completion
-if exists('*complete_info')
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-else
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-endif
-
-" use `[g` and `]g` to navigate diagnostics
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-" goto code navigation
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-" use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-	execute 'h '.expand('<cword>')
-  else
-	call CocAction('doHover')
-  endif
-endfunction
-" highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-" symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
-" applying codeaction to the selected region
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-" apply autofix to problem on the current line
-"nmap <leader>qf <Plug>(coc-fix-current)
 
 
 " ===
@@ -324,6 +371,12 @@ nmap <leader>a  <Plug>(coc-codeaction-selected)
 " ===
 let g:airline_theme='dark'
 let g:airline_powerline_font=1
+
+
+" ===
+" ===  lightline settings
+" ===
+let g:lightline = {'colorscheme': 'horizon'}
 
 
 " ===
@@ -372,10 +425,43 @@ let g:suda#prefix = 'sudo://'
 
 
 " ===
+" ===  auto-pairs settings
+" ===
+autocmd Filetype html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->', '<' : '>'})
+autocmd Filetype php let b:AutoPairs = AutoPairsDefine({'<?' : '?>', '<?php' : '?>'})
+autocmd Filetype vim let b:AutoPairs = AutoPairsDefine({}, ['"'])
+let g:AutoPairsFlyMode = 1
+
+
+" ===
+" ===  autoformat settings
+" ===
+"let g:autoformat_verbosemode = 1
+"autocmd BufWrite *.sql,*.c,*.py,*.java,*.js,*.html,*.yaml,*.toml :Autoformat
+noremap <F3> :Autoformat<cr>
+
+
+
+" ===
+" ===  leetcode settings
+" ===
+let g:leetcode_china=1
+let g:leetcode_browser='chrome'
+let g:leetcode_solution_filetype='python3'
+let g:leetcode_hide_paid_only=1
+let g:leetcode_hide_companies=1
+let g:leetcode_hide_topics=1
+nnoremap <leader>ll :LeetCodeList<cr>
+nnoremap <leader>lt :LeetCodeTest<cr>
+nnoremap <leader>ls :LeetCodeSubmit<cr>
+nnoremap <leader>li :LeetCodeSignIn<cr>
+
+
+" ===
 " ===  autocmd markdown snippets
 " ===
-autocmd Filetype markdown imap <buffer> ,f <Esc>/<++><CR>:nohlsearch<CR>"_c4l
-autocmd Filetype markdown imap <buffer> ,w <Esc>/ <++><CR>:nohlsearch<CR>"_c5l<CR>
+autocmd Filetype markdown imap <buffer> ,f <Esc>/<++><cr>:nohlsearch<cr>"_c4l
+autocmd Filetype markdown imap <buffer> ,w <Esc>/ <++><cr>:nohlsearch<cr>"_c5l<cr>
 autocmd Filetype markdown imap <buffer> ,n ---<Enter><Enter>
 autocmd Filetype markdown imap <buffer> ,b **** <++><Esc>F*hi
 autocmd Filetype markdown imap <buffer> ,s ~~~~ <++><Esc>F~hi
@@ -384,7 +470,7 @@ autocmd Filetype markdown imap <buffer> ,i ** <++><Esc>F*i
 autocmd Filetype markdown imap <buffer> ,d `` <++><Esc>F`i
 autocmd Filetype markdown imap <buffer> ,t <center></center><++><Esc>F/hi
 autocmd Filetype markdown imap <buffer> ,c ```<Enter><++><Enter>```<Enter><Enter><++><Esc>4kA
-autocmd Filetype markdown imap <buffer> ,m - [ ] 
+autocmd Filetype markdown imap <buffer> ,m - [ ]
 autocmd Filetype markdown imap <buffer> ,p ![](<++>) <++><Esc>F[a
 autocmd Filetype markdown imap <buffer> ,a [](<++>) <++><Esc>F[a
 autocmd Filetype markdown imap <buffer> ,1 #<Space><Enter><++><Esc>kA
@@ -397,7 +483,8 @@ autocmd Filetype markdown imap <buffer> ,l --------<Enter>
 " ===
 " ===  autocmd viml snippets
 " ===
-autocmd FileType vim imap <buffer> ,t " ===<Esc>yyppkA 
+autocmd FileType vim imap <buffer> ,t " ===<Esc>yyppkA
+autocmd FileType vim imap <buffer> ,da call dein#add('')<Esc>hi
 
 
 " ===
@@ -411,3 +498,6 @@ autocmd BufNewFile *.sh call ScriptHeader()
 " ===  autocmd settings
 " ===
 autocmd! bufwritepost $MYVIMRC source %
+autocmd! bufwritepost $MYVIMRC call lightline#init()
+autocmd! bufwritepost $MYVIMRC call lightline#colorscheme()
+
