@@ -22,10 +22,10 @@
 " ===  autoload for first time uses
 " ===
 if empty(glob('$HOME/.config/nvim/dein/repos/github.com/Shougo/dein.vim'))
-	silent !curl -fLo $HOME/.config/nvim/install.sh --create-dirs
-				\ https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh
-	silent !sh ./installer.sh $HOME/.config/nvim/dein
-	autocmd VimEnter * :call dein#install() | source $MYVIMRC
+    silent !curl -fLo $HOME/.config/nvim/install.sh --create-dirs
+                \ https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh
+    silent !sh ./installer.sh $HOME/.config/nvim/dein
+    autocmd VimEnter * :call dein#install() | source $MYVIMRC
 endif
 
 
@@ -34,9 +34,9 @@ endif
 " ===
 let has_machine_specific_file = 1
 if empty(glob('$HOME/.config/nvim/_machine_specific.vim'))
-	let has_machine_specific_file = 0
-	silent! exec '!cp $HOME/.config/nvim/default_configs/_machine_specific_default.vim
-				\ $HOME/.config/nvim/_machine_specific.vim'
+    let has_machine_specific_file = 0
+    silent! exec '!cp $HOME/.config/nvim/default_configs/_machine_specific_default.vim
+                \ $HOME/.config/nvim/_machine_specific.vim'
 endif
 source $HOME/.config/nvim/_machine_specific.vim
 
@@ -46,20 +46,20 @@ source $HOME/.config/nvim/_machine_specific.vim
 " ===
 
 function ScriptHeader()
-	if &filetype == 'python'
-		let header = '#!/usr/bin/env python'
-		let cfg = '# vim: ts=4 sw=4 sts=4 expandtab'
-	elseif &filetype == 'sh'
-		let header = '#!/bin/bash'
-	endif
-	let line = getline(1)
-	if line == header
-		return
-	endif
-	call append(0,header)
-	if &filetype == 'python'
-		call append(2,cfg)
-	endif
+    if &filetype == 'python'
+        let header = '#!/usr/bin/env python'
+        let cfg = '# vim: ts=4 sw=4 sts=4 expandtab'
+    elseif &filetype == 'sh'
+        let header = '#!/bin/bash'
+    endif
+    let line = getline(1)
+    if line == header
+        return
+    endif
+    call append(0,header)
+    if &filetype == 'python'
+        call append(2,cfg)
+    endif
 endfunction
 
 
@@ -99,9 +99,9 @@ set wildmenu
 set autochdir
 "set lazyredraw
 if has("patch-8.1.1564")
-	set signcolumn=number
+    set signcolumn=number
 else
-	set signcolumn=yes
+    set signcolumn=yes
 endif
 
 
@@ -146,7 +146,7 @@ set wildignore+=*.png,*.jpg,*.gif,*.jpeg
 
 
 if &compatible
-	set nocompatible
+    set nocompatible
 endif
 
 
@@ -159,99 +159,99 @@ let s:dein_path = '~/.config/nvim/dein'
 let &runtimepath = &runtimepath.','.s:dein_path.'/repos/github.com/Shougo/dein.vim'
 
 if dein#load_state(s:dein_path)
-	call dein#begin(s:dein_path)
+    call dein#begin(s:dein_path)
 
-	" dein
-	call dein#add(s:dein_path.'/repos/github.com/Shougo/dein.vim')
-	call dein#add('wsdjeg/dein-ui.vim')
-	call dein#add('haya14busa/dein-command.vim')
+    " dein
+    call dein#add(s:dein_path.'/repos/github.com/Shougo/dein.vim')
+    call dein#add('wsdjeg/dein-ui.vim')
+    call dein#add('haya14busa/dein-command.vim')
 
-	" colorscheme
-	call dein#add('theniceboy/vim-deus')
-	call dein#add('bigeagle/molokai')
-	call dein#add('altercation/vim-colors-solarized')
-	call dein#add('danilo-augusto/vim-afterglow')
-	call dein#add('joshdick/onedark.vim')
-	call dein#add('ntk148v/vim-horizon')
+    " colorscheme
+    call dein#add('theniceboy/vim-deus')
+    call dein#add('bigeagle/molokai')
+    call dein#add('altercation/vim-colors-solarized')
+    call dein#add('danilo-augusto/vim-afterglow')
+    call dein#add('joshdick/onedark.vim')
+    call dein#add('ntk148v/vim-horizon')
 
-	" auto completion
-	call dein#add('Shougo/deoplete.nvim')
-	if !has('nvim')
-		call dein#add('roxma/nvim-yarp')
-		call dein#add('roxma/vim-hug-neovim-rpc')
-	endif
-	call dein#add('deoplete-plugins/deoplete-jedi')
-	call dein#add('Shougo/neco-vim')
-	call dein#add('jiangmiao/auto-pairs')
-	call dein#add('autozimu/LanguageClient-neovim', {
-				\ 'rev': 'next',
-				\ 'build': 'bash install.sh',
-				\ })
+    " auto completion
+    call dein#add('Shougo/deoplete.nvim')
+    if !has('nvim')
+        call dein#add('roxma/nvim-yarp')
+        call dein#add('roxma/vim-hug-neovim-rpc')
+    endif
+    call dein#add('deoplete-plugins/deoplete-jedi')
+    call dein#add('Shougo/neco-vim')
+    call dein#add('jiangmiao/auto-pairs')
+    call dein#add('autozimu/LanguageClient-neovim', {
+                \ 'rev': 'next',
+                \ 'build': 'bash install.sh',
+                \ })
 
-	" file explorer
-	call dein#add('Shougo/defx.nvim')
-	if !has('nvim')
-		call dein#add('roxma/nvim-yarp')
-		call dein#add('roxma/vim-hug-neovim-rpc')
-	endif
-	call dein#add('kristijanhusak/defx-icons')
+    " file explorer
+    call dein#add('Shougo/defx.nvim')
+    if !has('nvim')
+        call dein#add('roxma/nvim-yarp')
+        call dein#add('roxma/vim-hug-neovim-rpc')
+    endif
+    call dein#add('kristijanhusak/defx-icons')
 
-	" auto format
-	call dein#add('Chiel92/vim-autoformat')
-	"call dein#add('google/vim-maktaba')
-	"call dein#add('google/vim-codefmt')
-	"call dein#add('google/vim-glaive')
+    " auto format
+    call dein#add('Chiel92/vim-autoformat')
+    "call dein#add('google/vim-maktaba')
+    "call dein#add('google/vim-codefmt')
+    "call dein#add('google/vim-glaive')
 
     " git
     call dein#add('airblade/vim-gitgutter')
     call dein#add('cohama/agit.vim')
     call dein#add('kdheepak/lazygit.nvim')
 
-	" markdown
-	call dein#add('suan/vim-instant-markdown')
-	call dein#config('vim-instant-markdown', {
-				\ 'lazy': 1, 'on_ft': 'markdown',
-				\ })
-	call dein#add('mzlogin/vim-markdown-toc')
-	call dein#config('vim-markdown-toc', {
-				\ 'lazy': 1, 'on_ft': 'markdown',
-				\ })
-	call dein#add('dhruvasagar/vim-table-mode')
+    " markdown
+    call dein#add('suan/vim-instant-markdown')
+    call dein#config('vim-instant-markdown', {
+                \ 'lazy': 1, 'on_ft': 'markdown',
+                \ })
+    call dein#add('mzlogin/vim-markdown-toc')
+    call dein#config('vim-markdown-toc', {
+                \ 'lazy': 1, 'on_ft': 'markdown',
+                \ })
+    call dein#add('dhruvasagar/vim-table-mode')
 
-	" tagbar
-	"call dein#add('majutsushi/tagbar')
-	call dein#add('liuchengxu/vista.vim')
+    " tagbar
+    "call dein#add('majutsushi/tagbar')
+    call dein#add('liuchengxu/vista.vim')
 
-	" leetcode
-	call dein#add('ianding1/leetcode.vim')
+    " leetcode
+    call dein#add('ianding1/leetcode.vim')
 
     " undo tree
     call dein#add('mbbill/undotree')
 
-	" status line
-	call dein#add('theniceboy/eleline.vim')
-	"call dein#add('itchyny/lightline.vim')
+    " status line
+    call dein#add('theniceboy/eleline.vim')
+    "call dein#add('itchyny/lightline.vim')
 
-	" other useful plugins
-	call dein#add('lambdalisue/suda.vim')
-	call dein#add('tpope/vim-surround')
-	call dein#add('junegunn/goyo.vim')
-	call dein#config('goyo.vim', {
-				\ 'lazy': 1,
-				\ 'on_ft': ['txt', 'markdown'],
-				\ })
-	call dein#add('scrooloose/nerdcommenter') " comment
-	call dein#add('mhinz/vim-startify')
-	call dein#add('kshenoy/vim-signature')
-	call dein#add('junegunn/vim-after-object') " da= to delete what's after =
+    " other useful plugins
+    call dein#add('lambdalisue/suda.vim')
+    call dein#add('tpope/vim-surround')
+    call dein#add('junegunn/goyo.vim')
+    call dein#config('goyo.vim', {
+                \ 'lazy': 1,
+                \ 'on_ft': ['txt', 'markdown'],
+                \ })
+    call dein#add('scrooloose/nerdcommenter') " comment
+    call dein#add('mhinz/vim-startify')
+    call dein#add('kshenoy/vim-signature')
+    call dein#add('junegunn/vim-after-object') " da= to delete what's after =
 
-	call dein#end()
-	call dein#save_state()
+    call dein#end()
+    call dein#save_state()
 endif
 
 " auto install plugins
 if dein#check_install()
-	call dein#install()
+    call dein#install()
 endif
 
 filetype plugin indent on
@@ -286,18 +286,18 @@ nmap <leader>rp :call map(dein#check_clean(), "delete(v:val, 'rf')")<cr>
 " ===
 let g:deoplete#enable_at_startup = 1
 call deoplete#custom#option({
-			\ 'smart_case': v:true,
-			\ 'auto_complete_delay': 100
-			\ })
+            \ 'smart_case': v:true,
+            \ 'auto_complete_delay': 100
+            \ })
 inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 "autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 call deoplete#custom#option('sources', {
-			\ 'cpp': ['LanguageClient'],
-			\ 'c': ['LanguageClient'],
-			\ 'vim': ['vim'],
-			\ 'zsh': ['zsh'],
-			\ 'python': ['pyls']
-			\ })
+            \ 'cpp': ['LanguageClient'],
+            \ 'c': ['LanguageClient'],
+            \ 'vim': ['vim'],
+            \ 'zsh': ['zsh'],
+            \ 'python': ['pyls']
+            \ })
 
 
 " ===
@@ -318,32 +318,32 @@ let g:defx_icons_root_opened_tree_icon = ''
 let g:defx_icons_nested_opened_tree_icon = ''
 let g:defx_icons_nested_closed_tree_icon = ''
 call defx#custom#option('_', {
-			\ 'columns': 'icons:git:indent:filename:type',
-			\ 'winwidth': 30,
-			\ 'split': 'vertical',
-			\ 'direction': 'topleft',
-			\ 'listed': 1,
-			\ 'ignored_files': '.git,.svn,.__pycache__,.sass-cache,.DS_Store,*.pyc,*.swp,.netrwhist,.gitignore',
-			\ 'show_ignored_files': 0,
-			\ 'buffer_name': '',
-			\ 'toggle': 1,
-			\ 'resume': 1
-			\ })
+            \ 'columns': 'icons:git:indent:filename:type',
+            \ 'winwidth': 30,
+            \ 'split': 'vertical',
+            \ 'direction': 'topleft',
+            \ 'listed': 1,
+            \ 'ignored_files': '.git,.svn,.__pycache__,.sass-cache,.DS_Store,*.pyc,*.swp,.netrwhist,.gitignore',
+            \ 'show_ignored_files': 0,
+            \ 'buffer_name': '',
+            \ 'toggle': 1,
+            \ 'resume': 1
+            \ })
 autocmd FileType defx call s:defx_mappins()
 autocmd BufWritePost * call defx#redraw()
 
 function! s:defx_mappins() abort
-	nnoremap <silent><buffer><expr> <cr> defx#do_action('open_tree', 'toggle')
-	nnoremap <silent><buffer><expr> <2-LeftMouse> defx#do_action('open', ['drop'])
-	nnoremap <silent><buffer><expr> l defx#do_action('drop')
-	nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
-	nnoremap <silent><buffer><expr> d defx#do_action('remove')
-	nnoremap <silent><buffer><expr> r defx#do_action('rename')
-	nnoremap <silent><buffer><expr> N defx#do_action('new_file')
-	nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
-	nnoremap <silent><buffer><expr> P defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':h'))
-	nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
-	nnoremap <silent><buffer><expr> <C-r> defx#do_action('redraw')
+    nnoremap <silent><buffer><expr> <cr> defx#do_action('open_tree', 'toggle')
+    nnoremap <silent><buffer><expr> <2-LeftMouse> defx#do_action('open', ['drop'])
+    nnoremap <silent><buffer><expr> l defx#do_action('drop')
+    nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
+    nnoremap <silent><buffer><expr> d defx#do_action('remove')
+    nnoremap <silent><buffer><expr> r defx#do_action('rename')
+    nnoremap <silent><buffer><expr> N defx#do_action('new_file')
+    nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
+    nnoremap <silent><buffer><expr> P defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':h'))
+    nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+    nnoremap <silent><buffer><expr> <C-r> defx#do_action('redraw')
 endfunction
 
 
@@ -358,13 +358,33 @@ endfunction
 " ===  vim-startify settings
 " ===
 let g:startify_custom_header = [
-			\ "   _                    _                  _                  ",
-			\ "  | |__   __ _ _ __ ___( )___   _ ____   _(_)_ __ ___         ",
-			\ "  | '_ \\ / _` | '__/ _ \\// __| | '_ \\ \\ / / | '_ ` _ \\   ",
-			\ "  | | | | (_| | | |  __/ \\__ \\ | | | \\ V /| | | | | | |    ",
-			\ "  |_| |_|\\__,_|_|  \\___| |___/ |_| |_|\\_/ |_|_| |_| |_|    ",
-			\ "                                                              ",
-			\ ]
+            \ "   _                    _                  _                  ",
+            \ "  | |__   __ _ _ __ ___( )___   _ ____   _(_)_ __ ___         ",
+            \ "  | '_ \\ / _` | '__/ _ \\// __| | '_ \\ \\ / / | '_ ` _ \\   ",
+            \ "  | | | | (_| | | |  __/ \\__ \\ | | | \\ V /| | | | | | |    ",
+            \ "  |_| |_|\\__,_|_|  \\___| |___/ |_| |_|\\_/ |_|_| |_| |_|    ",
+            \ "                                                              ",
+            \ ]
+
+
+" ===
+" ===  gitgutter settings
+" ===
+let g:gitgutter_sign_allow_clobber = 0
+let g:gitgutter_map_keys = 0
+let g:gitgutter_preview_win_floating = 1
+let g:gitgutter_sign_added = '▎'
+let g:gitgutter_sign_modified = '░'
+let g:gitgutter_sign_removed = '▏'
+let g:gitgutter_sign_removed_first_line = '▔'
+let g:gitgutter_sign_modified_removed = '▒'
+" autocmd BufWritePost * GitGutter
+nnoremap <LEADER>gf :GitGutterFold<CR>
+nnoremap H :GitGutterPreviewHunk<CR>
+nnoremap <LEADER>g- :GitGutterPrevHunk<CR>
+nnoremap <LEADER>g= :GitGutterNextHunk<CR>
+
+
 " ===
 " ===  lightline settings
 " ===
@@ -439,9 +459,9 @@ let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 "let g:vista_fzf_preview = ['right:50%']
 let g:vista#renderer#enable_icon = 1
 let g:vista#renderer#icons = {
-\   "function": "\uf794",
-\   "variable": "\uf71b",
-\  }
+            \   "function": "\uf794",
+            \   "variable": "\uf71b",
+            \  }
 let g:scrollstatus_size = 15
 
 
