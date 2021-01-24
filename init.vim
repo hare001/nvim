@@ -1,10 +1,9 @@
-"  __  __         _   ___     _____ __  __ ____   ____
-" |  \/  |_   _  | \ | \ \   / /_ _|  \/  |  _ \ / ___|
-" | |\/| | | | | |  \| |\ \ / / | || |\/| | |_) | |
-" | |  | | |_| | | |\  | \ V /  | || |  | |  _ <| |___
-" |_|  |_|\__, | |_| \_|  \_/  |___|_|  |_|_| \_\\____|
-"         |___/
-
+"    __  __         _       _ _         _           
+"   |  \/  |_   _  (_)_ __ (_) |___   _(_)_ __ ___  
+"   | |\/| | | | | | | '_ \| | __\ \ / / | '_ ` _ \ 
+"   | |  | | |_| | | | | | | | |_ \ V /| | | | | | |
+"   |_|  |_|\__, | |_|_| |_|_|\__(_)_/ |_|_| |_| |_|
+"           |___/                                   
 
 " Author: @hare
 
@@ -12,9 +11,12 @@
 " ===  todos
 " ===
 " remove nvim vertical line between windows
-" fix status line bug
+" change tagbar to vista.vim
 " add python language server for deoplete.vim
-
+" HHKB arrow key in vim
+" add vim-snippets
+" add vim-codefmt
+" tmux backgroud color
 
 " ===
 " ===  autoload for first time uses
@@ -28,44 +30,20 @@ endif
 
 
 " ===
-" ===  python supports
+" ===  create a _machine_specific.vim file to adjusf machine specific stuff
 " ===
-if has('mac')
-	let g:python_host_prog='/usr/bin/python'
-	let g:python3_host_prog='/usr/local/bin/python3'
+let has_machine_specific_file = 1
+if empty(glob('$HOME/.config/nvim/_machine_specific.vim'))
+	let has_machine_specific_file = 0
+	silent! exec '!cp $HOME/.config/nvim/default_configs/_machine_specific_default.vim
+				\ $HOME/.config/nvim/_machine_specific.vim'
 endif
+source $HOME/.config/nvim/_machine_specific.vim
 
 
 " ===
 " ===  functions
 " ===
-function! CompileNRun()
-	exec "w"
-	if &filetype == 'python'
-		set splitbelow
-		:sp
-		:term python3 %
-	elseif &filetype == 'c'
-		exec "!g++ % -o %<"
-		exec "!time ./%<"
-	elseif &filetype == 'markdown'
-		exec 'InstantMarkdownPreview'
-	elseif &filetype == 'sh'
-		set splitbelow
-		:sp
-		:term
-	elseif &filetype =='html'
-		silent! !open %
-	endif
-endfunction
-
-function! NumberToggle()
-	if(&relativenumber == 1)
-		set norelativenumber number
-	else
-		set relativenumber
-	endif
-endfunc
 
 function ScriptHeader()
 	if &filetype == 'python'
@@ -78,28 +56,19 @@ function ScriptHeader()
 	if line == header
 		return
 	endif
-	"normal m'
 	call append(0,header)
 	if &filetype == 'python'
 		call append(2,cfg)
 	endif
-	"normal ''
 endfunction
-
-"function ChangeTheme()
-	"if g:colors_name == 'deus'
-		"colorscheme horizon
-	"elseif g:colors_name == 'horizon'
-		"colorscheme onedark
-	"else
-		"colorscheme deus
-	"endif
-"endfunction
 
 
 " ===
 " ===  editor settings
 " ===
+syntax enable
+syntax on
+set t_ut=
 set background=dark
 set termguicolors " if dont set this option, color might not right
 set list
@@ -107,10 +76,8 @@ set listchars=tab:\|\ ,eol:<,nbsp:%,trail:▫
 set encoding=utf-8
 set fileencodings=ucs-bom,utf-8,gbk,cp936,latin-1
 set conceallevel=2
+set laststatus=2
 "set statusline
-"set fillchars=stl:-
-"set fillchars+=stlnc:-
-"set fillchars+=vert:\|
 
 set ruler
 set number
@@ -125,10 +92,12 @@ set hidden
 set cmdheight=2
 set updatetime=100
 set shortmess+=c
+set textwidth=79
 set splitbelow
 set splitright
 set wildmenu
 set autochdir
+"set lazyredraw
 if has("patch-8.1.1564")
 	set signcolumn=number
 else
@@ -152,12 +121,9 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set smarttab
+set expandtab
+set autoindent
 set shiftround
-syntax enable
-syntax on
-"filetype off
-"filetype plugin on
-"filetype indent on
 set smartindent
 set autoread
 
@@ -195,10 +161,10 @@ let &runtimepath = &runtimepath.','.s:dein_path.'/repos/github.com/Shougo/dein.v
 if dein#load_state(s:dein_path)
 	call dein#begin(s:dein_path)
 
+	" dein
 	call dein#add(s:dein_path.'/repos/github.com/Shougo/dein.vim')
-
-	" install third-party plugins
-	" call dein#add('tpope/vim-surround')
+	call dein#add('wsdjeg/dein-ui.vim')
+	call dein#add('haya14busa/dein-command.vim')
 
 	" colorscheme
 	call dein#add('theniceboy/vim-deus')
@@ -232,37 +198,61 @@ if dein#load_state(s:dein_path)
 
 	" auto format
 	call dein#add('Chiel92/vim-autoformat')
+	"call dein#add('google/vim-maktaba')
+	"call dein#add('google/vim-codefmt')
+	"call dein#add('google/vim-glaive')
+
+    " git
+    call dein#add('airblade/vim-gitgutter')
+    call dein#add('cohama/agit.vim')
+    call dein#add('kdheepak/lazygit.nvim')
 
 	" markdown
 	call dein#add('suan/vim-instant-markdown')
-	"call dein#config('vim-instant-markdown', {
-				"\ 'lazy': 1, 'on_ft': 'markdown',
-				"\ })
+	call dein#config('vim-instant-markdown', {
+				\ 'lazy': 1, 'on_ft': 'markdown',
+				\ })
 	call dein#add('mzlogin/vim-markdown-toc')
-	"call dein#config('vim-markdown-toc', {
-				"\ 'lazy': 1, 'on_ft': 'markdown',
-				"\ })
+	call dein#config('vim-markdown-toc', {
+				\ 'lazy': 1, 'on_ft': 'markdown',
+				\ })
+	call dein#add('dhruvasagar/vim-table-mode')
 
 	" tagbar
-	call dein#add('majutsushi/tagbar')
+	"call dein#add('majutsushi/tagbar')
+	call dein#add('liuchengxu/vista.vim')
 
 	" leetcode
 	call dein#add('ianding1/leetcode.vim')
 
+    " undo tree
+    call dein#add('mbbill/undotree')
+
+	" status line
+	call dein#add('theniceboy/eleline.vim')
+	"call dein#add('itchyny/lightline.vim')
+
 	" other useful plugins
 	call dein#add('lambdalisue/suda.vim')
 	call dein#add('tpope/vim-surround')
-	"call dein#add('bling/vim-airline')
-	call dein#add('itchyny/lightline.vim')
+	call dein#add('junegunn/goyo.vim')
+	call dein#config('goyo.vim', {
+				\ 'lazy': 1,
+				\ 'on_ft': ['txt', 'markdown'],
+				\ })
 	call dein#add('scrooloose/nerdcommenter') " comment
 	call dein#add('mhinz/vim-startify')
 	call dein#add('kshenoy/vim-signature')
-	call dein#add('wsdjeg/dein-ui.vim')
+	call dein#add('junegunn/vim-after-object') " da= to delete what's after =
 
 	call dein#end()
 	call dein#save_state()
 endif
 
+" auto install plugins
+if dein#check_install()
+	call dein#install()
+endif
 
 filetype plugin indent on
 
@@ -274,40 +264,21 @@ colorscheme horizon
 
 
 " ===
-" ===  <leader> settings
-" ===
-let mapleader=";"
-
-
-" ===
 " ===  key bindings
 " ===
-vmap <leader>y "+y
-nmap <leader>p "+p
-nmap <leader>l :set list!<cr>
-nmap <leader>q :q<cr>
-nmap <leader>w :w<cr>
-nmap <leader>W :w sudo://%<cr>
-nmap <leader>o o<Esc>
-nmap <leader>O O<Esc>
-nmap <leader>g ggVG
-nmap <leader>h :echo has("")<left><left>
+source $HOME/.config/nvim/_basic_keybindings.vim
+noremap <leader>W :w sudo://%<cr>
 vmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
-" popup
 nmap <Leader>t <Plug>(coc-translator-p)
 vmap <Leader>t <Plug>(coc-translator-pv)
-" echo
 nmap <Leader>e <Plug>(coc-translator-e)
 vmap <Leader>e <Plug>(coc-translator-ev)
-vmap <leader>s :'<,'>sort<cr>
-nmap <leader>n :call NumberToggle()<cr>
 nmap <F2> :Defx <cr>
 "nmap <F4> :call ChangeTheme()<cr>
-map <F5> :call CompileNRun()<cr>
 nnoremap <silent> <F8> :TagbarToggle<cr>
 nmap <leader>rp :call map(dein#check_clean(), "delete(v:val, 'rf')")<cr>
-nmap <leader>rc :call dein#recache_runtimepath()<cr>
+"nmap <leader>rc :call dein#recache_runtimepath()<cr>
 
 
 " ===
@@ -379,30 +350,61 @@ endfunction
 " ===
 " ===  vim-airline settings
 " ===
-let g:airline_theme='dark'
-let g:airline_powerline_font=1
+"let g:airline_theme='dark'
+"let g:airline_powerline_font=1
 
 
+" ===
+" ===  vim-startify settings
+" ===
+let g:startify_custom_header = [
+			\ "   _                    _                  _                  ",
+			\ "  | |__   __ _ _ __ ___( )___   _ ____   _(_)_ __ ___         ",
+			\ "  | '_ \\ / _` | '__/ _ \\// __| | '_ \\ \\ / / | '_ ` _ \\   ",
+			\ "  | | | | (_| | | |  __/ \\__ \\ | | | \\ V /| | | | | | |    ",
+			\ "  |_| |_|\\__,_|_|  \\___| |___/ |_| |_|\\_/ |_|_| |_| |_|    ",
+			\ "                                                              ",
+			\ ]
 " ===
 " ===  lightline settings
 " ===
-let g:lightline = {'colorscheme': 'horizon'}
+"let g:lightline = {'colorscheme': 'horizon'}
 
 
 " ===
-" ===  instant-markdown settings
+" ===  vim-instant-markdown settings
 " ===
 "let g:instant_markdown_slow = 1
+let g:instant_markdown_slow = 0
 let g:instant_markdown_autostart = 0
+let g:instant_markdown_autoscroll = 1
 let g:instant_markdown_port = 8888
 autocmd VimLeave *.md silent exec "InstantMarkdownStop"
 "let g:instant_markdown_allow_external_content = 0
 "let g:instant_markdown_allow_unsafe_content = 1
-"let g:instant_markdown_autoscroll = 0
 "let g:instant_markdown_logfile = '/tmp/instant_markdown.log'
 "let g:instant_markdown_mathjax = 1
 "let g:instant_markdown_open_to_the_world = 1
 "let g:instant_markdown_python = 1
+
+
+" ===
+" ===  vim-table-mode settings
+" ===
+noremap <leader>tm :TableModeToggle<cr>
+let g:table_mode_cell_text_object_i_map = 'k<Bar>'
+
+
+" ===
+" ===  goyo settings
+" ===
+map <leader>gy :Goyo<cr>
+
+
+" ===
+" ===  vim-after-object settings
+" ===
+autocmd VimEnter * call after_object#enable('=', ':', '-', '#', ' ')
 
 
 " ===
@@ -426,6 +428,21 @@ let NERDTreeDirArrows=1
 let g:tagbar_position='botright vertical'
 let g:tagbar_iconchars = ['▶', '▼']
 let g:tagbar_width=30
+
+
+" ===
+" ===  vista.vim settings
+" ===
+noremap <leader>v :Vista!!<cr>
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+"let g:vista_default_executive = 'coc'
+"let g:vista_fzf_preview = ['right:50%']
+let g:vista#renderer#enable_icon = 1
+let g:vista#renderer#icons = {
+\   "function": "\uf794",
+\   "variable": "\uf71b",
+\  }
+let g:scrollstatus_size = 15
 
 
 " ===
@@ -465,7 +482,7 @@ nnoremap <leader>lt :LeetCodeTest<cr>
 nnoremap <leader>ls :LeetCodeSubmit<cr>
 nnoremap <leader>li :LeetCodeSignIn<cr>
 
-source $HOME/.config/nvim/snippets/markdown_snippets.vim
+source $HOME/.config/nvim/snippets/md_snippets.vim
 source $HOME/.config/nvim/snippets/vim_snippets.vim
 
 
@@ -479,6 +496,8 @@ autocmd BufNewFile *.sh call ScriptHeader()
 " ===
 " ===  autocmd settings
 " ===
-autocmd! bufwritepost $MYVIMRC source %
+autocmd! BufWritePost $MYVIMRC source %
 "autocmd! bufwritepost $MYVIMRC call lightline#init()
-autocmd! bufwritepost $MYVIMRC call lightline#colorscheme()
+"autocmd! bufwritepost $MYVIMRC call lightline#colorscheme()
+" auto change directory to current dir
+autocmd BufEnter * silent! lcd %:p:h
