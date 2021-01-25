@@ -17,6 +17,7 @@
 " add vim-snippets
 " add vim-codefmt
 " tmux backgroud color
+" gitgutter hunk preview colorscheme
 
 " ===
 " ===  autoload for first time uses
@@ -97,7 +98,8 @@ set splitbelow
 set splitright
 set wildmenu
 set autochdir
-"set lazyredraw
+set nolazyredraw
+set history=200
 if has("patch-8.1.1564")
     set signcolumn=number
 else
@@ -231,6 +233,9 @@ if dein#load_state(s:dein_path)
     " status line
     call dein#add('theniceboy/eleline.vim')
     "call dein#add('itchyny/lightline.vim')
+
+    " css color
+    call dein#add('ap/vim-css-color') 
 
     " other useful plugins
     call dein#add('lambdalisue/suda.vim')
@@ -378,6 +383,9 @@ let g:gitgutter_sign_modified = '░'
 let g:gitgutter_sign_removed = '▏'
 let g:gitgutter_sign_removed_first_line = '▔'
 let g:gitgutter_sign_modified_removed = '▒'
+highlight GitGutterAdd guifg=#009900 ctermfg=2
+highlight GitGutterChange guifg=#bbbb00 ctermfg=3
+highlight GitGutterChangeDelete guifg=#ff2222 ctermfg=1
 " autocmd BufWritePost * GitGutter
 nnoremap <LEADER>gf :GitGutterFold<CR>
 nnoremap H :GitGutterPreviewHunk<CR>
@@ -434,15 +442,6 @@ let g:gonvim_start_fullscreen = 1
 
 
 " ===
-" ===  nerdtree settings
-" ===
-let NERDTreeMinimalUI=0
-let NERDTreeQuitOnOpen=0
-let NERDChristmasTree=0
-let NERDTreeDirArrows=1
-
-
-" ===
 " ===  tagbar settings
 " ===
 let g:tagbar_position='botright vertical'
@@ -477,7 +476,7 @@ let g:suda#prefix = 'sudo://'
 autocmd Filetype html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->', '<' : '>'})
 autocmd Filetype php let b:AutoPairs = AutoPairsDefine({'<?' : '?>', '<?php' : '?>'})
 autocmd Filetype vim let b:AutoPairs = AutoPairsDefine({}, ['"'])
-let g:AutoPairsFlyMode = 1
+let g:AutoPairsFlyMode = 0
 
 
 " ===
@@ -516,8 +515,14 @@ autocmd BufNewFile *.sh call ScriptHeader()
 " ===
 " ===  autocmd settings
 " ===
+" auto source init.vim when saved
 autocmd! BufWritePost $MYVIMRC source %
-"autocmd! bufwritepost $MYVIMRC call lightline#init()
-"autocmd! bufwritepost $MYVIMRC call lightline#colorscheme()
+
 " auto change directory to current dir
 autocmd BufEnter * silent! lcd %:p:h
+
+" auto reinit css color
+autocmd! BufWritePost $MYVIMRC call css_color#reinit()
+
+"autocmd! bufwritepost $MYVIMRC call lightline#init()
+"autocmd! bufwritepost $MYVIMRC call lightline#colorscheme()
