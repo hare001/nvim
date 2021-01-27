@@ -47,16 +47,17 @@ source $HOME/.config/nvim/_machine_specific.vim
 function SetTitle()
     if &filetype == 'sh'
         call append(0, '#!/bin/bash')
-        call append(1, '#Author:@hare')
+        call append(1, '#Author: @hare')
         call append(2, '#Time:'.strftime('%F %T'))
         call append(3, '#Name:'.expand('%'))
         call append(4, '#Description: <++>')
         call append(5, '')
     elseif &filetype == 'python'
         call append(0, '#!/usr/bin/env python3')
-        call append(1, '#-*-coding: utf8 -*-')
-        call append(2, '#vim: ts=4 sw=4 sts=4 expandtab')
-        call append(3, '')
+        call append(1, '#-*- coding: utf8 -*-')
+        call append(2, '#Author: @hare')
+        call append(3, '#vim: ts=4 sw=4 sts=4 expandtab')
+        call append(4, '')
     endif
 endfunction
 
@@ -714,7 +715,7 @@ autocmd! BufWritePost $MYVIMRC source %
 autocmd BufNewFile *.py,*.sh call SetTitle()
 
 " auto change directory to current dir
-autocmd BufEnter * silent! lcd %:p:h
+"autocmd BufEnter * silent! lcd %:p:h
 
 " auto reinit css color
 autocmd! BufEnter * silent! HexokinaseTurnOn
