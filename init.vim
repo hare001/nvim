@@ -11,13 +11,12 @@
 " ===  todos
 " ===
 " remove nvim vertical line between windows
-" change tagbar to vista.vim
-" add python language server for deoplete.vim
 " HHKB arrow key in vim
 " add vim-snippets
 " add vim-codefmt
-" tmux backgroud color
-" gitgutter hunk preview colorscheme
+" add ag.vim
+" add w0rp/ale
+
 
 " ===
 " ===  autoload for first time uses
@@ -45,23 +44,34 @@ source $HOME/.config/nvim/_machine_specific.vim
 " ===
 " ===  functions
 " ===
-
-function ScriptHeader()
-    if &filetype == 'python'
-        let header = '#!/usr/bin/env python'
-        let cfg = '# vim: ts=4 sw=4 sts=4 expandtab'
-    elseif &filetype == 'sh'
-        let header = '#!/bin/bash'
-    endif
-    let line = getline(1)
-    if line == header
-        return
-    endif
-    call append(0,header)
-    if &filetype == 'python'
-        call append(2,cfg)
+function SetTitle()
+    if &filetype == 'sh'
+        call append(0, '#!/bin/bash')
+        call append(1, '#Author:@hare')
+        call append(2, '#Time:'.strftime('%F %T'))
+        call append(3, '#Name:'.expand('%'))
+        call append(4, '#Description: <++>')
+        call append(5, '')
+    elseif &filetype == 'python'
+        call append(0, '#!/usr/bin/env python3')
+        call append(1, '#-*-coding: utf8 -*-')
+        call append(2, '#vim: ts=4 sw=4 sts=4 expandtab')
+        call append(3, '')
     endif
 endfunction
+
+
+" ===
+" ===  snippets
+" ===
+source $HOME/.config/nvim/snippets/md_snippets.vim
+source $HOME/.config/nvim/snippets/vim_snippets.vim
+
+
+" ===
+" ===  key bindings
+" ===
+source $HOME/.config/nvim/_basic_keybindings.vim
 
 
 " ===
@@ -75,8 +85,11 @@ set termguicolors " if dont set this option, color might not right
 set list
 set listchars=tab:\|\ ,eol:<,nbsp:%,trail:▫
 set encoding=utf-8
-set fileencodings=ucs-bom,utf-8,gbk,cp936,latin-1
+set fileencoding=utf-8
+set fileencodings=utf-8,gbk,gb18030,gb2312,cp936,usc-bom,euc-jp,latin-1
+set bs=eol,start,indent
 set conceallevel=2
+set concealcursor=""
 set laststatus=2
 "set statusline
 
@@ -98,8 +111,11 @@ set splitbelow
 set splitright
 set wildmenu
 set autochdir
-set nolazyredraw
+set lazyredraw
+set ttimeout
+set ttimeoutlen=50
 set history=200
+set formatoptions+=B
 if has("patch-8.1.1564")
     set signcolumn=number
 else
@@ -125,26 +141,53 @@ set softtabstop=4
 set smarttab
 set expandtab
 set autoindent
+set cindent
 set shiftround
 set smartindent
 set autoread
 
 
 " ===
-" ===  no backup files
+" ===  code fold
 " ===
-set nobackup
+if has('folding')
+    set foldenable
+    set foldmethod=indent
+    set foldlevel=99
+endif
+
+
+" ===
+" ===  backup files
+" ===
+set backup
+set writebackup
 set noswapfile
-set nowritebackup
 set noundofile
+set backupdir=$HOME/.vim/tmp
+set backupext=.bak
+silent! call mkdir(expand('$HOME/.vim/tmp'), "p", 0755)
 
 
 " ===
 " ===  ignore files
 " ===
-set wildignore+=*DS_Store
-set wildignore+=*.git
-set wildignore+=*.png,*.jpg,*.gif,*.jpeg
+set wildignore+=*DS_Store,*.ipch
+set wildignore+=*.o,*.obj,*.exe,*~,*.a,*.pdb,*.lib
+set wildignore+=*.so,*.dll,*.egg,*.jar,*.class,*.pyc,*.pyo,*.dex,*.gem
+set wildignore+=*.7z,*.rar,*.gz,*.tar,*.gzip,*.bz2,*.tgz,*.xz
+set wildignore+=*.png,*.jpg,*.gif,*.jpeg,*.bmp,*.tga,*.pcx,*.ppm,*.img,*.iso
+set wildignore+=*.so,*.swp,*.zip,*/.Trash/**,*.dmg,*/.rbenv/**
+set wildignore+=*/.nv/**,*.app,*.git,.git
+set wildignore+=*.wav,*.mp3,*.ogg,*.pcm
+set wildignore+=*.mht,*.suo,*.sdf,*.jnlp
+set wildignore+=*.chm,*.epub,*.pdf,*.mobi,*.ttf
+set wildignore+=*.mp4,*.avi,*.flv,*.mov,*.mkv,*.swf,*.swc
+set wildignore+=*.ppt,*.pptx,*.docx,*.xlt,*.xls,*.xlsx,*.odt,*.wps
+set wildignore+=*.msi,*.crx,*.deb,*.vfd,*.apk,*.ipa,*.bin,*.msu
+set wildignore+=*.gba,*.sfc,*.078,*.nds,*.smd,*.smc
+set wildignore+=*.linux2,*.win32,*.darwin,*.freebsd,*.linux,*.android
+set suffixes=.bak,~,.o,.h,.info,.swp,.obj,.pyc,.pyo,.egg-info,.class
 
 
 if &compatible
@@ -177,18 +220,10 @@ if dein#load_state(s:dein_path)
     call dein#add('ntk148v/vim-horizon')
 
     " auto completion
-    call dein#add('Shougo/deoplete.nvim')
-    if !has('nvim')
-        call dein#add('roxma/nvim-yarp')
-        call dein#add('roxma/vim-hug-neovim-rpc')
-    endif
-    call dein#add('deoplete-plugins/deoplete-jedi')
-    call dein#add('Shougo/neco-vim')
-    call dein#add('jiangmiao/auto-pairs')
-    call dein#add('autozimu/LanguageClient-neovim', {
-                \ 'rev': 'next',
-                \ 'build': 'bash install.sh',
+    call dein#add('neoclide/coc.nvim', {
+                \ 'merged': 0
                 \ })
+    call dein#add('jiangmiao/auto-pairs')
 
     " file explorer
     call dein#add('Shougo/defx.nvim')
@@ -197,6 +232,19 @@ if dein#load_state(s:dein_path)
         call dein#add('roxma/vim-hug-neovim-rpc')
     endif
     call dein#add('kristijanhusak/defx-icons')
+
+    " file navigation
+    call dein#add('junegunn/fzf', {
+                \ 'build': './install --all',
+                \ 'rtp': '',
+                \ 'merged': 0
+                \ })
+    call dein#add('junegunn/fzf.vim', {
+                \ 'depends': 'fzf'
+                \ })
+    call dein#add('Yggdroot/LeaderF', {
+                \ 'build': 'sh ./install.sh'
+                \ })
 
     " auto format
     call dein#add('Chiel92/vim-autoformat')
@@ -221,7 +269,6 @@ if dein#load_state(s:dein_path)
     call dein#add('dhruvasagar/vim-table-mode')
 
     " tagbar
-    "call dein#add('majutsushi/tagbar')
     call dein#add('liuchengxu/vista.vim')
 
     " leetcode
@@ -234,8 +281,10 @@ if dein#load_state(s:dein_path)
     call dein#add('theniceboy/eleline.vim')
     "call dein#add('itchyny/lightline.vim')
 
-    " css color
-    call dein#add('ap/vim-css-color') 
+    " highlight color
+    call dein#add('rrethy/vim-hexokinase', {
+                \ 'build': 'make hexokinase'
+                \ }) " #rrggbb #rgb
 
     " other useful plugins
     call dein#add('lambdalisue/suda.vim')
@@ -249,6 +298,7 @@ if dein#load_state(s:dein_path)
     call dein#add('mhinz/vim-startify')
     call dein#add('kshenoy/vim-signature')
     call dein#add('junegunn/vim-after-object') " da= to delete what's after =
+    call dein#add('godlygeek/tabular') " aligning the table
 
     call dein#end()
     call dein#save_state()
@@ -259,55 +309,182 @@ if dein#check_install()
     call dein#install()
 endif
 
+" remove plugins 
+nmap <leader>rp :call map(dein#check_clean(), "delete(v:val, 'rf')") <cr>
+nmap <leader>re :call dein#recache_runtimepath() <cr>
+
 filetype plugin indent on
 
 
 "colorscheme molokai
-"colorscheme deus
+colorscheme deus
 "colorscheme onedark
-colorscheme horizon
+"colorscheme horizon
+"highlight! Pmenu guibg=gray guifg=black ctermbg=gray ctermfg=black
+"highlight! PmenuSel guibg=gray guifg=brown ctermbg=brown ctermfg=gray
 
 
 " ===
-" ===  key bindings
+" ===  gui settings
 " ===
-source $HOME/.config/nvim/_basic_keybindings.vim
-noremap <leader>W :w sudo://%<cr>
-vmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+if has("gui_running")
+    set guioptions-=T
+    set guioptions-=L
+    set guioptions-=r
+    set guioptions-=m
+endif
+
+
+" ===
+" ===  fzf.vim settings
+" ===
+set rtp+=/usr/local/opt/fzf
+nnoremap <leader>f :Leaderf file<cr> 
+noremap <silent> <C-f> :Rg<cr>
+noremap <silent> <C-h> :History<cr>
+noremap <C-t> :Btags<cr>
+noremap <silent> <C-l> :Lines<cr>
+"noremap <silent> <C-w> :Buffers<cr>
+noremap <leader>; :History:<cr>
+
+let g:fzf_preview_window = 'right:60%'
+let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
+
+function! s:list_buffers()
+    redir => list
+    silent ls
+    redir END
+    return split(list, "\n")
+endfunction
+
+function! s:delete_buffers(lines)
+    execute 'bwipeout' join(map(a:lines, {_, line -> split(line)[0]}))
+endfunction
+
+command! BD call fzf#run(fzf#wrap({
+            \ 'source': s:list_buffers(),
+            \ 'sink*': { lines -> s:delete_buffers(lines) },
+            \ 'options': '--multi --reverse --bind ctrl-a:select-all+accept'
+            \ }))
+
+noremap <C-d> :BD<cr>
+
+
+" ===
+" ===  leaderf settings
+" ===
+let g:Lf_PreviewInPopup = 1
+let g:Lf_PreviewCode = 1
+let g:Lf_ShowHidden = 1
+let g:Lf_ShowDevIcons = 1
+let g:Lf_UseVersionControlTool = 0
+let g:Lf_IgnoreCurrentBufferName = 1
+let g:Lf_WildIgnore = {
+            \ 'dir': ['.git', 'vendor', 'node_modules'],
+            \ 'file': ['__vim_project_root']
+            \ }
+let g:Lf_UseMemoryCache = 0
+let g:Lf_UseCache = 0
+
+
+" ===
+" ===  coc.nvim settings
+" ===
+let g:coc_global_extensions = [
+            \ 'coc-css',
+            \ 'coc-go',
+            \ 'coc-html',
+            \ 'coc-json',
+            \ 'coc-jedi',
+            \ 'coc-markdownlint',
+            \ 'coc-phpls',
+            \ 'coc-prettier',
+            \ 'coc-pyright',
+            \ 'coc-python',
+            \ 'coc-sh',
+            \ 'coc-snippets',
+            \ 'coc-syntax',
+            \ 'coc-translator',
+            \ 'coc-tsserver',
+            \ 'coc-vimlsp',
+            \ 'coc-xml',
+            \ 'coc-yaml'
+            \ ]
+let g:coc_disable_startup_warning = 1
+
+" use tab for trigger completion with cahracters ahead and navigate
+inoremap <silent><expr> <tab>
+            \ pumvisible() ? "\<C-n>" :
+            \ <sid>check_back_space() ? "\<tab>" :
+            \ coc#refresh()
+inoremap <expr><S-tab> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1] =~# '\s'
+endfunction
+if has('nvim')
+    inoremap <silent><expr> <c-l> coc#refresh()
+else
+    inoremap <silent><expr><c-@> coc#refresh()
+endif
+
+" use <cr> to confirm completion
+ if exists('*complete_info')
+     inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<cr>"
+ else
+     inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<cr>"
+ endif
+
+" use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" goto code navigation
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+	execute 'h '.expand('<cword>')
+  else
+	call CocAction('doHover')
+  endif
+endfunction
+
+" highlight the symbol and its references when holding the cursor.
+"autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" applying codeaction to the selected region
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" format
+"vmap <leader>f  <Plug>(coc-format-selected)
+"nmap <leader>f  <Plug>(coc-format-selected)
+"<leader>f key binding to LeaderF
+
+" translator
 nmap <Leader>t <Plug>(coc-translator-p)
 vmap <Leader>t <Plug>(coc-translator-pv)
 nmap <Leader>e <Plug>(coc-translator-e)
 vmap <Leader>e <Plug>(coc-translator-ev)
-nmap <F2> :Defx <cr>
-"nmap <F4> :call ChangeTheme()<cr>
-nnoremap <silent> <F8> :TagbarToggle<cr>
-nmap <leader>rp :call map(dein#check_clean(), "delete(v:val, 'rf')")<cr>
-"nmap <leader>rc :call dein#recache_runtimepath()<cr>
 
-
-" ===
-" === deoplete settings
-" ===
-let g:deoplete#enable_at_startup = 1
-call deoplete#custom#option({
-            \ 'smart_case': v:true,
-            \ 'auto_complete_delay': 100
-            \ })
-inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
-"autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
-call deoplete#custom#option('sources', {
-            \ 'cpp': ['LanguageClient'],
-            \ 'c': ['LanguageClient'],
-            \ 'vim': ['vim'],
-            \ 'zsh': ['zsh'],
-            \ 'python': ['pyls']
-            \ })
+" apply autofix to problem on the current line
+"nmap <leader>qf <Plug>(coc-fix-current)
 
 
 " ===
 " ===  defx settings
 " ===
+nmap <F2> :Defx <cr>
 let g:defx_icons_enable_syntax_hightlight = 0
 let g:defx_icons_enable_syntax_highlight = 1
 let g:defx_icons_column_length = 1
@@ -318,6 +495,7 @@ let g:defx_icons_move_icon = ''
 let g:defx_icons_parent_icon = ''
 let g:defx_icons_default_icon = ''
 let g:defx_icons_directory_symlink_icon = ''
+
 " Options below are applicable only when using "tree" feature
 let g:defx_icons_root_opened_tree_icon = ''
 let g:defx_icons_nested_opened_tree_icon = ''
@@ -353,12 +531,30 @@ endfunction
 
 
 " ===
-" ===  vim-airline settings
+" ===  undotree settings
 " ===
-"let g:airline_theme='dark'
-"let g:airline_powerline_font=1
+noremap L :UndotreeToggle<cr>
+let g:undotree_CustomUndotreeCmd = 'topleft vertical 30 new'
+let g:Undotree_CustomDiffpanelCmd = 'botright 10 new'
+let g:undotree_DiffAutoOpen = 1
+let g:undotree_SetFocusWhenToggle = 1
+let g:undotree_ShortIndicators = 1
+let g:undotree_DiffpanelHeight = 8
+let g:undotree_HelpLine = 0
+let g:undotree_SplitWidth = 30
+function g:Undotree_CustomMap()
+    nmap <buffer> j <plug>UndotreePreviousState
+    nmap <buffer> k <plug>UndotreeNextState
+    nmap <buffer> J 5<plug>UndotreePreviousState
+    nmap <buffer> K 5<plug>UndotreeNextState
+endfunction
 
 
+" ===
+" ===  vim-hexokinase settings
+" ===
+let g:Hexokinase_highlighters = ['foregroundfull']
+let g:Hexokinase_optInPatterns = 'full_hex,rgb,rgba,hsl,hsla,colour_names'
 " ===
 " ===  vim-startify settings
 " ===
@@ -383,20 +579,19 @@ let g:gitgutter_sign_modified = '░'
 let g:gitgutter_sign_removed = '▏'
 let g:gitgutter_sign_removed_first_line = '▔'
 let g:gitgutter_sign_modified_removed = '▒'
+"let g:gitgutter_sign_added = '+'
+"let g:gitgutter_sign_modified = '~'
+"let g:gitgutter_sign_removed = '_'
+"let g:gitgutter_sign_removed_first_line = '▔'
+"let g:gitgutter_sign_modified_removed = '-'
 highlight GitGutterAdd guifg=#009900 ctermfg=2
 highlight GitGutterChange guifg=#bbbb00 ctermfg=3
 highlight GitGutterChangeDelete guifg=#ff2222 ctermfg=1
-" autocmd BufWritePost * GitGutter
+autocmd BufWritePost * GitGutter
 nnoremap <LEADER>gf :GitGutterFold<CR>
 nnoremap H :GitGutterPreviewHunk<CR>
 nnoremap <LEADER>g- :GitGutterPrevHunk<CR>
 nnoremap <LEADER>g= :GitGutterNextHunk<CR>
-
-
-" ===
-" ===  lightline settings
-" ===
-"let g:lightline = {'colorscheme': 'horizon'}
 
 
 " ===
@@ -442,32 +637,29 @@ let g:gonvim_start_fullscreen = 1
 
 
 " ===
-" ===  tagbar settings
-" ===
-let g:tagbar_position='botright vertical'
-let g:tagbar_iconchars = ['▶', '▼']
-let g:tagbar_width=30
-
-
-" ===
 " ===  vista.vim settings
 " ===
 noremap <leader>v :Vista!!<cr>
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
-"let g:vista_default_executive = 'coc'
-"let g:vista_fzf_preview = ['right:50%']
+let g:vista_default_executive = 'coc'
+let g:vista_fzf_preview = ['right:50%']
 let g:vista#renderer#enable_icon = 1
 let g:vista#renderer#icons = {
             \   "function": "\uf794",
             \   "variable": "\uf71b",
             \  }
 let g:scrollstatus_size = 15
+let g:vista_sidebar_width = 40
+let g:vista_update_on_text_changed = 1
+let g:vista_stay_on_open = 0
+let g:vista_highlight_whole_line = 1
 
 
 " ===
 " ===  suda settings
 " ===
 let g:suda#prefix = 'sudo://'
+noremap <leader>W :w sudo://%<cr>
 
 
 " ===
@@ -475,7 +667,7 @@ let g:suda#prefix = 'sudo://'
 " ===
 autocmd Filetype html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->', '<' : '>'})
 autocmd Filetype php let b:AutoPairs = AutoPairsDefine({'<?' : '?>', '<?php' : '?>'})
-autocmd Filetype vim let b:AutoPairs = AutoPairsDefine({}, ['"'])
+autocmd Filetype vim let b:AutoPairs = AutoPairsDefine({'\^"': '', '<': ''})
 let g:AutoPairsFlyMode = 0
 
 
@@ -501,16 +693,6 @@ nnoremap <leader>lt :LeetCodeTest<cr>
 nnoremap <leader>ls :LeetCodeSubmit<cr>
 nnoremap <leader>li :LeetCodeSignIn<cr>
 
-source $HOME/.config/nvim/snippets/md_snippets.vim
-source $HOME/.config/nvim/snippets/vim_snippets.vim
-
-
-" ===
-" ===  python settings
-" ===
-autocmd BufNewFile *.py call ScriptHeader()
-autocmd BufNewFile *.sh call ScriptHeader()
-
 
 " ===
 " ===  autocmd settings
@@ -518,11 +700,30 @@ autocmd BufNewFile *.sh call ScriptHeader()
 " auto source init.vim when saved
 autocmd! BufWritePost $MYVIMRC source %
 
+" auto add title to python & sh files
+autocmd BufNewFile *.py,*.sh call SetTitle()
+
 " auto change directory to current dir
 autocmd BufEnter * silent! lcd %:p:h
 
 " auto reinit css color
-autocmd! BufWritePost $MYVIMRC call css_color#reinit()
+autocmd! BufEnter * silent! HexokinaseTurnOn
+autocmd! BufWrite * silent! HexokinaseTurnOn
 
-"autocmd! bufwritepost $MYVIMRC call lightline#init()
-"autocmd! bufwritepost $MYVIMRC call lightline#colorscheme()
+" auto quit when main windows is closed
+autocmd BufEnter * 
+            \ if 0 == len(filter(range(1, winnr('$')),
+            \ 'empty(getbufvar(winbufnr(v:val), "&bt"))')) |
+            \ qa! |
+            \ endif
+
+" go back to where you exited
+if has("autocmd")
+    autocmd BufReadPost *
+                \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+                \ execute "normal g'\"" |
+                \ endif
+endif
+
+" allow markdown to auto wrap
+autocmd FileType markdown setlocal wrap
