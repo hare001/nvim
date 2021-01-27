@@ -595,6 +595,16 @@ nnoremap <LEADER>g= :GitGutterNextHunk<CR>
 
 
 " ===
+" ===  lazygit.nvim settings
+" ===
+noremap <C-g> :LazyGit<cr>
+let g:lazygit_floating_window_winblend = 0 " transparency of floating window
+let g:lazygit_floating_window_scaling_factor = 1.0
+let g:lazygit_floating_window_corner_chars = ['╭', '╮', '╰', '╯']
+let g:lazygit_use_neovim_remote = 1
+
+
+" ===
 " ===  vim-instant-markdown settings
 " ===
 "let g:instant_markdown_slow = 1
