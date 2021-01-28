@@ -1,9 +1,9 @@
-"    __  __         _       _ _         _           
-"   |  \/  |_   _  (_)_ __ (_) |___   _(_)_ __ ___  
-"   | |\/| | | | | | | '_ \| | __\ \ / / | '_ ` _ \ 
+"    __  __         _       _ _         _
+"   |  \/  |_   _  (_)_ __ (_) |___   _(_)_ __ ___
+"   | |\/| | | | | | | '_ \| | __\ \ / / | '_ ` _ \
 "   | |  | | |_| | | | | | | | |_ \ V /| | | | | | |
 "   |_|  |_|\__, | |_|_| |_|_|\__(_)_/ |_|_| |_| |_|
-"           |___/                                   
+"           |___/
 
 " Author: @hare
 
@@ -61,6 +61,9 @@ function SetTitle()
     endif
 endfunction
 
+function! TrimWhiteSpace()
+    %s/\s\+$//e
+endfunction
 
 " ===
 " ===  snippets
@@ -225,6 +228,7 @@ if dein#load_state(s:dein_path)
                 \ 'merged': 0
                 \ })
     call dein#add('jiangmiao/auto-pairs')
+    call dein#add('sagarrakshe/toggle-bool')
 
     " file explorer
     call dein#add('Shougo/defx.nvim')
@@ -279,7 +283,8 @@ if dein#load_state(s:dein_path)
     call dein#add('mbbill/undotree')
 
     " status line
-    call dein#add('theniceboy/eleline.vim')
+    call dein#add('taigacute/spaceline.vim')
+    "call dein#add('theniceboy/eleline.vim')
     "call dein#add('itchyny/lightline.vim')
 
     " highlight color
@@ -300,6 +305,8 @@ if dein#load_state(s:dein_path)
     call dein#add('kshenoy/vim-signature')
     call dein#add('junegunn/vim-after-object') " da= to delete what's after =
     call dein#add('godlygeek/tabular') " aligning the table
+    call dein#add('liuchengxu/vim-which-key')
+    call dein#add('ryanoasis/vim-devicons')
 
     call dein#end()
     call dein#save_state()
@@ -310,7 +317,7 @@ if dein#check_install()
     call dein#install()
 endif
 
-" remove plugins 
+" remove plugins
 nmap <leader>rp :call map(dein#check_clean(), "delete(v:val, 'rf')") <cr>
 nmap <leader>re :call dein#recache_runtimepath() <cr>
 
@@ -331,6 +338,8 @@ colorscheme deus
 if has("gui_running")
     set guioptions-=T
     set guioptions-=L
+    set guioptions-=l
+    set guioptions-=R
     set guioptions-=r
     set guioptions-=m
 endif
@@ -340,7 +349,7 @@ endif
 " ===  fzf.vim settings
 " ===
 set rtp+=/usr/local/opt/fzf
-nnoremap <leader>f :Leaderf file<cr> 
+nnoremap <leader>f :Leaderf file<cr>
 noremap <silent> <C-f> :Rg<cr>
 noremap <silent> <C-h> :History<cr>
 noremap <C-t> :Btags<cr>
@@ -393,6 +402,7 @@ let g:Lf_UseCache = 0
 " ===
 let g:coc_global_extensions = [
             \ 'coc-css',
+            \ 'coc-git',
             \ 'coc-go',
             \ 'coc-html',
             \ 'coc-json',
@@ -532,6 +542,11 @@ endfunction
 
 
 " ===
+" ===  spaceline.vim settings
+" ===
+let g:spaceline_seperate_style = 'slant-cons'
+
+" ===
 " ===  undotree settings
 " ===
 noremap L :UndotreeToggle<cr>
@@ -556,6 +571,8 @@ endfunction
 " ===
 let g:Hexokinase_highlighters = ['foregroundfull']
 let g:Hexokinase_optInPatterns = 'full_hex,rgb,rgba,hsl,hsla,colour_names'
+
+
 " ===
 " ===  vim-startify settings
 " ===
@@ -683,6 +700,12 @@ let g:AutoPairsFlyMode = 0
 
 
 " ===
+" ===  toggle-bool settings
+" ===
+noremap <leader>x :ToggleBool<cr>
+
+
+" ===
 " ===  autoformat settings
 " ===
 "let g:autoformat_verbosemode = 1
@@ -722,7 +745,7 @@ autocmd! BufEnter * silent! HexokinaseTurnOn
 autocmd! BufWrite * silent! HexokinaseTurnOn
 
 " auto quit when main windows is closed
-autocmd BufEnter * 
+autocmd BufEnter *
             \ if 0 == len(filter(range(1, winnr('$')),
             \ 'empty(getbufvar(winbufnr(v:val), "&bt"))')) |
             \ qa! |
@@ -738,3 +761,6 @@ endif
 
 " allow markdown to auto wrap
 autocmd FileType markdown setlocal wrap
+
+" remove whitespace on save
+autocmd BufWritePre * call TrimWhiteSpace()
