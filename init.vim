@@ -402,7 +402,6 @@ let g:Lf_UseCache = 0
 " ===
 let g:coc_global_extensions = [
             \ 'coc-css',
-            \ 'coc-git',
             \ 'coc-go',
             \ 'coc-html',
             \ 'coc-json',
