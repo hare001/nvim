@@ -2,11 +2,15 @@
 " ===  basic keybindings
 " ===
 let mapleader=" "
-noremap ; :
+"noremap ; :
 
+" quit and save
 noremap Q :q<cr>
 noremap <C-q> :qa<cr>
 noremap S :w<cr>
+
+" move to end of line and insert
+inoremap <C-a> <esc>A
 
 " new tab
 noremap T :tabnew<cr>
@@ -130,4 +134,41 @@ noremap qf <C-w>o
  " noremap sh :set nosplitright<cr>:vsplit<cr>:set splitright<cr>
  " noremap sl :set splitright<cr>:vsplit<cr>
 
+if g:colemak == 1
+    " movement
+    noremap <silent> u k
+    noremap <silent> n h
+    noremap <silent> e j
+    noremap <silent> i l
+    noremap <silent> gu gk
+    noremap <silent> ge gj
 
+    noremap <silent> U 5k
+    noremap <silent> E 5j
+
+    noremap W 5w
+    noremap B 5b
+
+    " undo
+    noremap l u
+
+    " insert
+    noremap k i
+    noremap K I
+
+    " search
+    noremap - N
+    noremap = n
+
+    " movimg around windows
+    noremap <leader>u <C-w>k
+    noremap <leader>e <C-w>j
+    noremap <leader>n <C-w>h
+    noremap <leader>i <C-w>l
+
+ " split the screens to up, down, left, right
+    noremap su :set nosplitbelow<cr>:split<cr>:set splitbelow<cr>
+    noremap se :set splitbelow<cr>:split<cr>
+    noremap sn :set nosplitright<cr>:vsplit<cr>:set splitright<cr>
+    noremap si :set splitright<cr>:vsplit<cr>
+endif
